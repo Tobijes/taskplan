@@ -62,14 +62,20 @@ function run_server(; endpoint::String = "tcp://*:" * PORT)
     ctx = ZMQ.Context()
     sock = ZMQ.Socket(ctx, ZMQ.REP)
     ZMQ.bind(sock, endpoint)
+    sock.rcvtimeo = 1000  # 1s timeout so Ctrl+C (InterruptException) can be delivered between polls
     touch_health()
 
     println("Worker listening on $endpoint")
 
     try
         while true
-            # Receive raw bytes
-            raw = ZMQ.recv(sock)
+            # Receive raw bytes (returns every ~1s on timeout so SIGINT can interrupt)
+            raw = try
+                ZMQ.recv(sock)
+            catch e
+                e isa ZMQ.TimeoutError && continue
+                rethrow(e)
+            end
             bytes = Vector{UInt8}(raw)
 
             println("Received job request ($(length(bytes)) bytes)")
@@ -85,7 +91,10 @@ function run_server(; endpoint::String = "tcp://*:" * PORT)
 
                 # Convert, solve, convert back
                 tasks, users, n_periods = request_to_solver_inputs(req)
+                t_start = time()
                 results = solve_task_schedule(tasks, users, n_periods)
+                elapsed_ms = round((time() - t_start) * 1000, digits=1)
+                println("  Solve time: $(elapsed_ms) ms")
                 response = solver_result_to_response(results)
 
                 # Encode protobuf response
@@ -104,7 +113,7 @@ function run_server(; endpoint::String = "tcp://*:" * PORT)
                 take!(out)
             end
 
-            println("  Sending response ($(length(resp_bytes)) bytes)")
+            println("Sending response ($(length(resp_bytes)) bytes)")
             ZMQ.send(sock, ZMQ.Message(resp_bytes))
             touch_health()
         end

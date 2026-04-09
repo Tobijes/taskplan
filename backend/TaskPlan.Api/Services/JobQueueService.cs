@@ -28,6 +28,7 @@ public class JobQueueService : BackgroundService
 
         _jobs[entry.Id] = entry;
         _queue.Writer.TryWrite(entry.Id);
+        _logger.LogInformation("Job {JobId} queued", entry.Id);
 
         return entry.Id;
     }
@@ -68,7 +69,9 @@ public class JobQueueService : BackgroundService
                 entry.Status = JobStatus.Processing;
                 await NotifyListeners(entry);
 
+                _logger.LogInformation("Job {JobId} sending request to worker", jobId);
                 var result = await _zmqClient.SendJobAsync(entry.Request, stoppingToken);
+                _logger.LogInformation("Job {JobId} received response from worker", jobId);
                 entry.Result = result;
                 entry.Status = JobStatus.Done;
             }
