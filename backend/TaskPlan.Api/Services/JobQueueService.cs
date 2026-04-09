@@ -68,7 +68,7 @@ public class JobQueueService : BackgroundService
                 entry.Status = JobStatus.Processing;
                 await NotifyListeners(entry);
 
-                var result = await _zmqClient.SendJobAsync(entry.Request);
+                var result = await _zmqClient.SendJobAsync(entry.Request, stoppingToken);
                 entry.Result = result;
                 entry.Status = JobStatus.Done;
             }

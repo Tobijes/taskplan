@@ -7,20 +7,26 @@ namespace TaskPlan.Api.Services;
 
 public class ZmqWorkerClient : IDisposable
 {
-    private readonly RequestSocket _socket;
+    private RequestSocket _socket;
     private readonly object _lock = new();
+    private readonly string _workerAddress;
+    private readonly TimeSpan _timeout;
 
     public ZmqWorkerClient()
     {
+        _workerAddress = Environment.GetEnvironmentVariable("WORKER_ADDRESS") ?? "tcp://localhost:5555";
+        var timeoutSeconds = Environment.GetEnvironmentVariable("WORKER_TIMEOUT_SECONDS");
+        _timeout = TimeSpan.FromSeconds(int.TryParse(timeoutSeconds, out var seconds) ? seconds : 120);
+
         _socket = new RequestSocket();
-        var workerAddress = Environment.GetEnvironmentVariable("WORKER_ADDRESS") ?? "tcp://localhost:5555";
-        _socket.Connect(workerAddress);
+        _socket.Connect(_workerAddress);
     }
 
-    public Task<JobResultDto> SendJobAsync(SubmitJobRequest request)
+    public Task<JobResultDto> SendJobAsync(SubmitJobRequest request, CancellationToken cancellationToken = default)
     {
         return Task.Run(() =>
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var protoRequest = new Taskplan.JobRequest
             {
                 NPeriods = request.NPeriods
@@ -45,7 +51,12 @@ public class ZmqWorkerClient : IDisposable
             lock (_lock)
             {
                 _socket.SendFrame(requestBytes);
-                replyBytes = _socket.ReceiveFrameBytes();
+                if (!_socket.TryReceiveFrameBytes(_timeout, out replyBytes!))
+                {
+                    RecreateSocket();
+                    throw new TimeoutException(
+                        $"Worker did not respond within {_timeout.TotalSeconds} seconds");
+                }
             }
 
             var protoResult = Taskplan.JobResult.Parser.ParseFrom(replyBytes);
@@ -93,6 +104,13 @@ public class ZmqWorkerClient : IDisposable
         }
 
         return dto;
+    }
+
+    private void RecreateSocket()
+    {
+        _socket.Dispose();
+        _socket = new RequestSocket();
+        _socket.Connect(_workerAddress);
     }
 
     public void Dispose()

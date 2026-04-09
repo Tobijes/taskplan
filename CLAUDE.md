@@ -82,5 +82,11 @@ Shared contract between backend and worker. The backend has a copy at `backend/T
 
 CORS is configured in `Program.cs` to allow `http://localhost:5173`. Backend URL is hardcoded in `frontend/src/api/jobsApi.ts`.
 
+### Environment Variables
+| Variable | Default | Description |
+|---|---|---|
+| `WORKER_ADDRESS` | `tcp://localhost:5555` | ZeroMQ address of the Julia worker |
+| `WORKER_TIMEOUT_SECONDS` | `120` | Max seconds to wait for worker response before failing the job |
+
 ## Testing
 No test infrastructure exists yet.
