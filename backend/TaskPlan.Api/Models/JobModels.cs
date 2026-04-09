@@ -23,6 +23,7 @@ public class JobEntry
     public JobStatus Status { get; set; }
     public SubmitJobRequest Request { get; set; } = null!;
     public object? Result { get; set; }
+    public string? ErrorMessage { get; set; }
     public List<Func<JobStatus, Task>> Listeners { get; } = [];
 }
 

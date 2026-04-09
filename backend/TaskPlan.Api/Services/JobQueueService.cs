@@ -76,6 +76,7 @@ public class JobQueueService : BackgroundService
             {
                 _logger.LogError(ex, "Job {JobId} failed", jobId);
                 entry.Status = JobStatus.Failed;
+                entry.ErrorMessage = ex.Message;
             }
 
             await NotifyListeners(entry);

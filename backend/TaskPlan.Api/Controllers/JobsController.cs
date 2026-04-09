@@ -18,6 +18,24 @@ public class JobsController : ControllerBase
     [HttpPost]
     public IActionResult SubmitJob([FromBody] SubmitJobRequest request)
     {
+        if (request.Tasks.Count == 0)
+            return BadRequest(new { error = "At least one task is required" });
+        if (request.Users.Count != 2)
+            return BadRequest(new { error = "Exactly 2 users are required" });
+        if (request.NPeriods < 1)
+            return BadRequest(new { error = "Number of periods must be at least 1" });
+
+        var allowedFrequencies = new HashSet<int> { 1, 2, 4, 12 };
+        foreach (var task in request.Tasks)
+        {
+            if (string.IsNullOrWhiteSpace(task.Label))
+                return BadRequest(new { error = "All tasks must have a label" });
+            if (!allowedFrequencies.Contains(task.Frequency))
+                return BadRequest(new { error = $"Task '{task.Label}' has invalid frequency {task.Frequency}. Allowed: 1, 2, 4, 12" });
+            if (task.Workload < 1)
+                return BadRequest(new { error = $"Task '{task.Label}' must have a positive workload" });
+        }
+
         var jobId = _jobQueue.EnqueueJob(request);
         return Ok(new { jobId });
     }
@@ -89,6 +107,11 @@ public class JobsController : ControllerBase
         if (job is null)
         {
             return NotFound();
+        }
+
+        if (job.Status == JobStatus.Failed)
+        {
+            return BadRequest(new { error = job.ErrorMessage ?? "Job failed" });
         }
 
         if (job.Status != JobStatus.Done)

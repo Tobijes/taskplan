@@ -43,6 +43,14 @@ function solve_task_schedule(
     n_periods::Int,
 )::Vector{PeriodResult}
 
+    # -- Input validation
+    isempty(tasks) && throw(ArgumentError("At least one task is required"))
+    length(users) != 2 && throw(ArgumentError("Exactly 2 users are required, got $(length(users))"))
+    n_periods < 1 && throw(ArgumentError("n_periods must be >= 1, got $n_periods"))
+    for t in tasks
+        t.frequency <= 0 && throw(ArgumentError("Task '$(t.label)' has invalid frequency $(t.frequency)"))
+    end
+
     # -- Sets
     P = 1:n_periods           # Periods (weeks)
     U = 1:length(users)       # Users (persons)  – fixed to 2

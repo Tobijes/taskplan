@@ -50,6 +50,11 @@ public class ZmqWorkerClient : IDisposable
 
             var protoResult = Taskplan.JobResult.Parser.ParseFrom(replyBytes);
 
+            if (!string.IsNullOrEmpty(protoResult.Error))
+            {
+                throw new InvalidOperationException($"Worker error: {protoResult.Error}");
+            }
+
             return MapToDto(protoResult);
         });
     }

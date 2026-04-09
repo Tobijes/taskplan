@@ -19,6 +19,7 @@ message TaskDef {
 // Sent from Julia worker back to C# backend
 message JobResult {
   repeated PeriodSchedule periods = 1;
+  string error = 2;
 }
 
 message PeriodSchedule {
