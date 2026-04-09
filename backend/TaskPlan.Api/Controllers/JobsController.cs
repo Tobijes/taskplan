@@ -90,6 +90,24 @@ public class JobsController : ControllerBase
             }
         });
 
+        using var heartbeatTimer = new PeriodicTimer(TimeSpan.FromSeconds(20));
+        var heartbeatTask = Task.Run(async () =>
+        {
+            while (await heartbeatTimer.WaitForNextTickAsync(cancellationToken))
+            {
+                try
+                {
+                    await Response.WriteAsync(": heartbeat\n\n", cancellationToken);
+                    await Response.Body.FlushAsync(cancellationToken);
+                }
+                catch
+                {
+                    tcs.TrySetResult();
+                    break;
+                }
+            }
+        });
+
         try
         {
             await tcs.Task;
