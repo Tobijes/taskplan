@@ -2,7 +2,6 @@ export interface Task {
   label: string;
   frequency: 1 | 2 | 4 | 12;
   workload: number;
-  forceAlternation: boolean;
 }
 
 export type JobStatus = "Queued" | "Processing" | "Done" | "Failed";

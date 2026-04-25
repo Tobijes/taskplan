@@ -13,7 +13,6 @@ message TaskDef {
   string label = 1;
   int32 frequency = 2;        // 1, 2, 4, or 12
   int32 workload = 3;         // minutes
-  bool force_alternation = 4; // only applies when frequency == 1
 }
 
 // Sent from Julia worker back to C# backend

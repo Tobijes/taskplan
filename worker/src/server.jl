@@ -20,7 +20,6 @@ function request_to_solver_inputs(req::taskplan.JobRequest)
             td.label,
             Int(td.frequency),
             Int(td.workload),
-            td.force_alternation,
         )
         for td in req.tasks
     ]

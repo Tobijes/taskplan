@@ -1,14 +1,14 @@
 [
-  { "label": "Skrald", "frequency": 1, "workload": 10, "forceAlternation": true },
-  { "label": "Støvsugning", "frequency": 1, "workload": 20, "forceAlternation": true },
-  { "label": "Badeværelse", "frequency": 2, "workload": 15, "forceAlternation": false },
-  { "label": "Komfurrens", "frequency": 2, "workload": 10, "forceAlternation": false },
-  { "label": "Tørre støv af", "frequency": 4, "workload": 20, "forceAlternation": false },
-  { "label": "Køkkenvask", "frequency": 4, "workload": 10, "forceAlternation": false },
-  { "label": "Skifte sengetøj", "frequency": 4, "workload": 5, "forceAlternation": false },
-  { "label": "Rense mikroovn", "frequency": 4, "workload": 5, "forceAlternation": false },
-  { "label": "Pudse vinduer", "frequency": 12, "workload": 20, "forceAlternation": false },
-  { "label": "Afkalke", "frequency": 12, "workload": 15, "forceAlternation": false },
-  { "label": "Ovnrens", "frequency": 12, "workload": 30, "forceAlternation": false },
-  { "label": "Rense afløb", "frequency": 12, "workload": 15, "forceAlternation": false }
+  { "label": "Skrald", "frequency": 1, "workload": 10 },
+  { "label": "Støvsugning", "frequency": 1, "workload": 20 },
+  { "label": "Badeværelse", "frequency": 2, "workload": 15 },
+  { "label": "Komfurrens", "frequency": 2, "workload": 10 },
+  { "label": "Tørre støv af", "frequency": 4, "workload": 20 },
+  { "label": "Køkkenvask", "frequency": 4, "workload": 10 },
+  { "label": "Skifte sengetøj", "frequency": 4, "workload": 5 },
+  { "label": "Rense mikroovn", "frequency": 4, "workload": 5 },
+  { "label": "Pudse vinduer", "frequency": 12, "workload": 20 },
+  { "label": "Afkalke", "frequency": 12, "workload": 15 },
+  { "label": "Ovnrens", "frequency": 12, "workload": 30 },
+  { "label": "Rense afløb", "frequency": 12, "workload": 15 }
 ]

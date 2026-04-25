@@ -58,7 +58,7 @@ Shared contract between backend and worker. The backend has a copy at `backend/T
 
 ### Key Worker Files
 - `worker/src/server.jl` — ZMQ REP server, protobuf encoding/decoding, conversion functions
-- `worker/src/solver.jl` — `solve_task_schedule()` MIP model: assignment constraints, workload balancing, forced alternation
+- `worker/src/solver.jl` — `solve_task_schedule()` MIP model: assignment constraints, workload balancing
 
 ### Frontend Structure
 - `src/api/jobsApi.ts` — API client (hardcoded to `localhost:5000`)
@@ -69,7 +69,6 @@ Shared contract between backend and worker. The backend has a copy at `backend/T
 ## Domain Constraints
 - Exactly **2 users** (hardcoded in solver)
 - Task frequencies: **1, 2, 4, or 12** weeks only
-- Force alternation only applies to weekly (frequency=1) tasks
 - Workload is in integer minutes
 - All job storage is in-memory (lost on backend restart)
 

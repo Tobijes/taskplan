@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
 const FREQUENCY_OPTIONS: { value: Task["frequency"]; label: string }[] = [
@@ -33,21 +32,14 @@ interface Props {
 
 export function TaskEditor({ tasks, onChange }: Props) {
   const updateTask = (index: number, updates: Partial<Task>) => {
-    const next = tasks.map((t, i) => {
-      if (i !== index) return t;
-      const updated = { ...t, ...updates };
-      if (updates.frequency && updates.frequency !== 1) {
-        updated.forceAlternation = false;
-      }
-      return updated;
-    });
+    const next = tasks.map((t, i) => (i !== index ? t : { ...t, ...updates }));
     onChange(next);
   };
 
   const addTask = () => {
     onChange([
       ...tasks,
-      { label: "", frequency: 1, workload: 10, forceAlternation: false },
+      { label: "", frequency: 1, workload: 10 },
     ]);
   };
 
@@ -67,7 +59,6 @@ export function TaskEditor({ tasks, onChange }: Props) {
               <TableHead>Navn</TableHead>
               <TableHead>Frekvens (uger)</TableHead>
               <TableHead>Arbejdsbyrde (min)</TableHead>
-              <TableHead>Alternér</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
@@ -111,17 +102,6 @@ export function TaskEditor({ tasks, onChange }: Props) {
                       updateTask(i, { workload: Number(e.target.value) })
                     }
                     className="w-20"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Checkbox
-                    checked={task.forceAlternation}
-                    disabled={task.frequency !== 1}
-                    onCheckedChange={(checked) =>
-                      updateTask(i, {
-                        forceAlternation: checked === true,
-                      })
-                    }
                   />
                 </TableCell>
                 <TableCell>

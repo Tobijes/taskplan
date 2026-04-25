@@ -40,8 +40,7 @@ public class ZmqWorkerClient : IDisposable
                 {
                     Label = task.Label,
                     Frequency = task.Frequency,
-                    Workload = task.Workload,
-                    ForceAlternation = task.ForceAlternation
+                    Workload = task.Workload
                 });
             }
 

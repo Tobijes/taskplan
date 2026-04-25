@@ -14,7 +14,6 @@ public class TaskDefDto
     public string Label { get; set; } = "";
     public int Frequency { get; set; }
     public int Workload { get; set; }
-    public bool ForceAlternation { get; set; }
 }
 
 public class JobEntry

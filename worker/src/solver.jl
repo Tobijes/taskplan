@@ -7,7 +7,6 @@ struct TaskInput
     label::String
     frequency::Int
     workload::Int
-    force_alternation::Bool
 end
 
 struct TaskOutput
@@ -32,8 +31,7 @@ end
 
 Solve the task-planning MIP for exactly 2 users.
 
-* `tasks`     – `Vector{TaskInput}` with label, frequency, workload,
-                force_alternation
+* `tasks`     – `Vector{TaskInput}` with label, frequency, workload
 * `users`     – `Vector{String}` of length 2 (user names)
 * `n_periods` – number of planning periods (weeks)
 """
@@ -98,13 +96,6 @@ function solve_task_schedule(
 
     # -- Objective function
     @objective(model, Min, sum(absDiff))
-
-    ## SPECIFIC REQUIREMENTS
-    # Force alternation only for tasks where force_alternation == true
-    alternatingIdxs = findall(t -> t.force_alternation, tasks)
-    for wti in alternatingIdxs, p in P, u in U
-        fix(x[u, p, wti], (p + u + wti) % length(U))
-    end
 
     ## SOLVE
     optimize!(model)
