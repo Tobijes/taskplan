@@ -63,6 +63,7 @@ function run_server(; endpoint::String = "tcp://*:" * PORT)
     ZMQ.bind(sock, endpoint)
     sock.rcvtimeo = 1000  # 1s timeout so Ctrl+C (InterruptException) can be delivered between polls
     touch_health()
+    last_health = time()
 
     println("Worker listening on $endpoint")
 
@@ -72,7 +73,13 @@ function run_server(; endpoint::String = "tcp://*:" * PORT)
             raw = try
                 ZMQ.recv(sock)
             catch e
-                e isa ZMQ.TimeoutError && continue
+                if e isa ZMQ.TimeoutError
+                    if time() - last_health >= 30
+                        touch_health()
+                        last_health = time()
+                    end
+                    continue
+                end
                 rethrow(e)
             end
             bytes = Vector{UInt8}(raw)
