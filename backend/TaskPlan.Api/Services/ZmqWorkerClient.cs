@@ -107,6 +107,7 @@ public class ZmqWorkerClient : IDisposable
 
     private void RecreateSocket()
     {
+        _socket.Options.Linger = TimeSpan.Zero;
         _socket.Dispose();
         _socket = new RequestSocket();
         _socket.Connect(_workerAddress);
@@ -114,6 +115,7 @@ public class ZmqWorkerClient : IDisposable
 
     public void Dispose()
     {
+        _socket.Options.Linger = TimeSpan.Zero;
         _socket.Dispose();
     }
 }
