@@ -1,5 +1,8 @@
 FROM julia:1.12.4
 
+# Ensure runner is not overloaded
+ENV JULIA_NUM_PRECOMPILE_TASKS=2
+
 # GitHub Action runners run on AMD, we need to compile for Intel aswell
 ENV JULIA_CPU_TARGET="generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1),clone_all;skylake-avx512,clone_all;znver3,clone_all"
 
